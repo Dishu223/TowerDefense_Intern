@@ -23,10 +23,9 @@ public class Turret : MonoBehaviour
 
     private void Start()
     {
-        InvokeRepeating(nameof(UpdateTarget), 0f, 0.2f);
+        InvokeRepeating(nameof(UpdateTarget), 0f, 0.15f);
         SetupBulletPool();
 
-        // Auto-assign muzzle flash if not explicitly dragged in
         if (muzzleFlash == null && firePoint != null)
         {
             muzzleFlash = firePoint.GetComponentInChildren<ParticleSystem>();
@@ -54,6 +53,7 @@ public class Turret : MonoBehaviour
     {
         float sqrRange = turretData.range * turretData.range;
 
+        // Keep current target if still active and within range
         if (currentTarget != null && currentTarget.gameObject.activeInHierarchy)
         {
             float sqrDistToCurrent = (transform.position - currentTarget.position).sqrMagnitude;
@@ -63,13 +63,13 @@ public class Turret : MonoBehaviour
             }
         }
 
-        Enemy[] enemies = Object.FindObjectsByType<Enemy>(FindObjectsSortMode.None);
+        // Zero-allocation iteration through active enemies
         float shortestSqrDistance = Mathf.Infinity;
         Transform nearestEnemy = null;
 
-        foreach (Enemy enemy in enemies)
+        foreach (Enemy enemy in Enemy.ActiveEnemies)
         {
-            if (!enemy.gameObject.activeInHierarchy) continue;
+            if (enemy == null || !enemy.gameObject.activeInHierarchy) continue;
 
             float sqrDist = (transform.position - enemy.transform.position).sqrMagnitude;
             if (sqrDist < shortestSqrDistance && sqrDist <= sqrRange)
@@ -114,13 +114,11 @@ public class Turret : MonoBehaviour
     {
         if (bulletPool == null || firePoint == null) return;
 
-        // 1. Fire bullet from pool
         Projectile bullet = bulletPool.Get();
         bullet.transform.position = firePoint.position;
         bullet.transform.rotation = firePoint.rotation;
         bullet.Initialize(currentTarget, turretData.damage, bulletPool);
 
-        // 2. Trigger Muzzle Flash
         if (muzzleFlash != null)
         {
             muzzleFlash.Play();

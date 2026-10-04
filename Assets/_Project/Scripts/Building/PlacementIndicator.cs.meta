@@ -1,2 +1,13 @@
 fileFormatVersion: 2
 guid: 763ba757f14d5194693a602ee7217223
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - meshRenderer: {instanceID: 0}
+  - buildDustPrefab: {fileID: 4742389853924559695, guid: 96707113b84360642800f75dc25af45a, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
