@@ -6,6 +6,12 @@ using UnityEngine.Pool;
 
 public class Enemy : MonoBehaviour
 {
+    // ==========================================
+    // HIGH-PERFORMANCE STATIC REGISTRY
+    // ==========================================
+    private static readonly HashSet<Enemy> activeEnemies = new HashSet<Enemy>();
+    public static IReadOnlyCollection<Enemy> ActiveEnemies => activeEnemies;
+
     [Header("Movement Settings")]
     [SerializeField] private float moveSpeed = 3f;
     [SerializeField] private float reachThreshold = 0.1f;
@@ -27,10 +33,13 @@ public class Enemy : MonoBehaviour
     private float calculatedHeightOffset = 0f;
     private IObjectPool<Enemy> originPool;
 
-    private Color originalColor;
     private Vector3 originalBaseScale;
-    private Material runtimeMaterial;
     private Coroutine feedbackCoroutine;
+
+    // Zero-allocation Material Property Block for hit flashes
+    private static readonly int BaseColorPropertyId = Shader.PropertyToID("_BaseColor");
+    private MaterialPropertyBlock propertyBlock;
+    private Color defaultTintColor = Color.white;
 
     private void Awake()
     {
@@ -42,11 +51,33 @@ public class Enemy : MonoBehaviour
             meshRenderer = GetComponentInChildren<MeshRenderer>();
         }
 
-        if (meshRenderer != null)
+        propertyBlock = new MaterialPropertyBlock();
+        if (meshRenderer != null && meshRenderer.sharedMaterial != null)
         {
-            runtimeMaterial = meshRenderer.material;
-            originalColor = runtimeMaterial.color;
+            if (meshRenderer.sharedMaterial.HasProperty(BaseColorPropertyId))
+            {
+                defaultTintColor = meshRenderer.sharedMaterial.GetColor(BaseColorPropertyId);
+            }
         }
+    }
+
+    private void OnEnable()
+    {
+        activeEnemies.Add(this);
+    }
+
+    private void OnDisable()
+    {
+        activeEnemies.Remove(this);
+
+        if (feedbackCoroutine != null)
+        {
+            StopCoroutine(feedbackCoroutine);
+            feedbackCoroutine = null;
+        }
+
+        transform.localScale = originalBaseScale;
+        ResetMaterialColor();
     }
 
     private void CalculateHeightOffset()
@@ -73,10 +104,7 @@ public class Enemy : MonoBehaviour
         currentHealth = maxHealth;
 
         transform.localScale = originalBaseScale;
-        if (runtimeMaterial != null)
-        {
-            runtimeMaterial.color = originalColor;
-        }
+        ResetMaterialColor();
 
         if (pathPoints != null && pathPoints.Count > 0)
         {
@@ -133,15 +161,15 @@ public class Enemy : MonoBehaviour
 
     private IEnumerator HitJuiceRoutine()
     {
-        if (runtimeMaterial != null) runtimeMaterial.color = flashColor;
+        SetMaterialColor(flashColor);
         transform.localScale = Vector3.Scale(originalBaseScale, hitSquashScale);
 
         yield return new WaitForSeconds(0.08f);
 
-        if (runtimeMaterial != null) runtimeMaterial.color = originalColor;
+        ResetMaterialColor();
 
         float elapsed = 0f;
-        float duration = 0.001f;
+        float duration = 0.08f;
         Vector3 squashed = transform.localScale;
 
         while (elapsed < duration)
@@ -152,6 +180,19 @@ public class Enemy : MonoBehaviour
         }
 
         transform.localScale = originalBaseScale;
+    }
+
+    private void SetMaterialColor(Color color)
+    {
+        if (meshRenderer == null) return;
+        meshRenderer.GetPropertyBlock(propertyBlock);
+        propertyBlock.SetColor(BaseColorPropertyId, color);
+        meshRenderer.SetPropertyBlock(propertyBlock);
+    }
+
+    private void ResetMaterialColor()
+    {
+        SetMaterialColor(defaultTintColor);
     }
 
     private void Die()

@@ -1,147 +1,159 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class BuildManager : MonoBehaviour
 {
     [Header("Dependencies")]
     [SerializeField] private TilemapGrid tilemapGrid;
-    [SerializeField] private Camera mainCamera;
+    [SerializeField] private GameObject defaultTurretPrefab;
+    [SerializeField] private GameObject placementIndicator;
 
-    [Header("Active Selection")]
-    [SerializeField] private TurretDataSO selectedTurretData;
+    [Header("Painting Controls")]
+    [Tooltip("Hold down left mouse button to paint turrets across tiles")]
+    [SerializeField] private bool allowDragPainting = true;
 
-    [Header("Indicator & Feedback")]
-    [SerializeField] private PlacementIndicator indicatorPrefab;
+    [Header("Placement Juice")]
+    [Tooltip("Small scale bounce when turrets are placed")]
+    [SerializeField] private bool animateTurretSpawn = true;
 
-    private HashSet<Vector3Int> occupiedCells = new HashSet<Vector3Int>();
-    private PlacementIndicator activeIndicator;
-    private Vector3Int currentHoveredCell;
-    private bool isHoveringValid = false;
+    private readonly HashSet<Vector3Int> occupiedCells = new HashSet<Vector3Int>();
+    private Vector3Int lastPaintedCell = new Vector3Int(int.MinValue, int.MinValue, int.MinValue);
+    private Plane groundPlane;
+    private PlacementIndicator indicatorComponent;
 
-    private void Awake()
+    private void Start()
     {
-        if (mainCamera == null)
+        if (tilemapGrid == null)
         {
-            mainCamera = Camera.main;
+            tilemapGrid = Object.FindAnyObjectByType<TilemapGrid>();
         }
 
-        if (indicatorPrefab != null)
+        // Automatic fallback if prefab asset was dragged instead of a scene instance
+        if (placementIndicator != null && (!placementIndicator.scene.IsValid() || !placementIndicator.activeInHierarchy))
         {
-            activeIndicator = Instantiate(indicatorPrefab);
-            activeIndicator.gameObject.SetActive(false);
+            placementIndicator = Instantiate(placementIndicator, Vector3.zero, Quaternion.identity);
+            placementIndicator.name = "TilePlacementIndicator (Runtime Instance)";
         }
+        else if (placementIndicator == null)
+        {
+            PlacementIndicator found = Object.FindAnyObjectByType<PlacementIndicator>();
+            if (found != null) placementIndicator = found.gameObject;
+        }
+
+        if (placementIndicator != null)
+        {
+            placementIndicator.SetActive(true);
+            indicatorComponent = placementIndicator.GetComponent<PlacementIndicator>();
+            if (indicatorComponent != null)
+            {
+                indicatorComponent.SetVisible(false);
+            }
+        }
+
+        float surfaceY = tilemapGrid != null ? tilemapGrid.FloorSurfaceY : 0.2f;
+        groundPlane = new Plane(Vector3.up, new Vector3(0f, surfaceY, 0f));
     }
 
     private void Update()
     {
-        UpdateHoverState();
-
-        if (WasPointerPressed())
-        {
-            TryPlaceTurret(currentHoveredCell);
-        }
+        HandlePlacementInput();
     }
 
-    private void UpdateHoverState()
+    private void HandlePlacementInput()
     {
-        if (selectedTurretData == null || activeIndicator == null) return;
+        var mouse = Mouse.current;
+        if (mouse == null || Camera.main == null) return;
 
-        Vector2 screenPos = GetPointerScreenPosition();
-        if (screenPos == Vector2.zero)
+        // Prevent building through UI buttons or HUD elements
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
         {
-            activeIndicator.gameObject.SetActive(false);
+            if (indicatorComponent != null) indicatorComponent.SetVisible(false);
             return;
         }
 
-        Ray ray = mainCamera.ScreenPointToRay(screenPos);
-        float surfaceY = tilemapGrid != null ? tilemapGrid.FloorSurfaceY : 0f;
-        Plane groundPlane = new Plane(Vector3.up, new Vector3(0f, surfaceY, 0f));
-
-        if (groundPlane.Raycast(ray, out float enterDistance))
+        Ray ray = Camera.main.ScreenPointToRay(mouse.position.ReadValue());
+        if (!groundPlane.Raycast(ray, out float enterDist))
         {
-            Vector3 worldHitPoint = ray.GetPoint(enterDistance);
-            worldHitPoint.y = surfaceY;
+            if (indicatorComponent != null) indicatorComponent.SetVisible(false);
+            return;
+        }
 
-            currentHoveredCell = tilemapGrid.WorldToCell(worldHitPoint);
+        Vector3 hitPoint = ray.GetPoint(enterDist);
+        Vector3Int cellPos = tilemapGrid.WorldToCell(hitPoint);
+        Vector3 cellCenter = tilemapGrid.GetWorldCenter(cellPos);
 
-            // Check if cell is within painted tilemap boundaries
-            if (tilemapGrid.Tilemap.HasTile(currentHoveredCell))
+        bool isBuildable = tilemapGrid.IsBuildable(cellPos);
+        bool isOccupied = occupiedCells.Contains(cellPos);
+        bool isValidPlacement = isBuildable && !isOccupied;
+
+        // 1. Smooth Indicator Movement & Validity
+        if (placementIndicator != null && indicatorComponent != null)
+        {
+            indicatorComponent.SetVisible(true);
+            indicatorComponent.SetTargetPosition(cellCenter);
+            indicatorComponent.SetStatus(isValidPlacement);
+        }
+
+        // 2. Drag-to-Paint & Single Click
+        bool isBuilding = allowDragPainting ? mouse.leftButton.isPressed : mouse.leftButton.wasPressedThisFrame;
+
+        if (isBuilding)
+        {
+            if (cellPos != lastPaintedCell)
             {
-                activeIndicator.gameObject.SetActive(true);
-
-                // Elevate indicator by +0.02f above tile surface to avoid Z-fighting
-                Vector3 indicatorPos = tilemapGrid.GetWorldCenter(currentHoveredCell);
-                indicatorPos.y = surfaceY + 0.02f;
-                activeIndicator.transform.position = indicatorPos;
-
-                isHoveringValid = tilemapGrid.IsBuildable(currentHoveredCell) && !occupiedCells.Contains(currentHoveredCell);
-                activeIndicator.SetStatus(isHoveringValid);
-            }
-            else
-            {
-                activeIndicator.gameObject.SetActive(false);
+                if (isValidPlacement)
+                {
+                    PlaceTurret(cellPos, cellCenter);
+                }
+                lastPaintedCell = cellPos;
             }
         }
         else
         {
-            activeIndicator.gameObject.SetActive(false);
+            lastPaintedCell = new Vector3Int(int.MinValue, int.MinValue, int.MinValue);
         }
     }
 
-    private bool WasPointerPressed()
+    private void PlaceTurret(Vector3Int cellPos, Vector3 worldPos)
     {
-        if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame)
-        {
-            return true;
-        }
+        if (defaultTurretPrefab == null) return;
 
-        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    private Vector2 GetPointerScreenPosition()
-    {
-        if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.isPressed)
-        {
-            return Touchscreen.current.primaryTouch.position.ReadValue();
-        }
-
-        if (Mouse.current != null)
-        {
-            return Mouse.current.position.ReadValue();
-        }
-
-        return Vector2.zero;
-    }
-
-    public bool TryPlaceTurret(Vector3Int cellPos)
-    {
-        if (!tilemapGrid.IsBuildable(cellPos)) return false;
-        if (occupiedCells.Contains(cellPos)) return false;
-
-        Vector3 spawnPosition = tilemapGrid.GetWorldCenter(cellPos);
-
-        GameObject placedTurret = Instantiate(selectedTurretData.prefab, spawnPosition, Quaternion.identity);
-        placedTurret.name = $"{selectedTurretData.turretName}_{cellPos.x}_{cellPos.y}";
-
+        GameObject turretObj = Instantiate(defaultTurretPrefab, worldPos, Quaternion.identity);
         occupiedCells.Add(cellPos);
 
-        if (activeIndicator != null)
+        if (animateTurretSpawn)
         {
-            activeIndicator.TriggerPlacementJuice();
+            StartCoroutine(PopSpawnRoutine(turretObj.transform));
         }
 
-        Debug.Log($"[BuildManager] Built {selectedTurretData.turretName} at cell {cellPos}!");
-        return true;
+        if (indicatorComponent != null)
+        {
+            indicatorComponent.TriggerPlacementJuice(worldPos);
+            indicatorComponent.SetStatus(false);
+        }
     }
 
-    public void SelectTurretToBuild(TurretDataSO turretData)
+    private IEnumerator PopSpawnRoutine(Transform target)
     {
-        selectedTurretData = turretData;
+        Vector3 endScale = target.localScale;
+        target.localScale = new Vector3(endScale.x * 0.1f, endScale.y * 1.4f, endScale.z * 0.1f);
+
+        float elapsed = 0f;
+        float duration = 0.18f;
+
+        while (elapsed < duration && target != null)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            // Elastic pop curve
+            float curve = Mathf.Sin(t * Mathf.PI * 0.5f);
+            target.localScale = Vector3.Lerp(target.localScale, endScale, curve);
+            yield return null;
+        }
+
+        if (target != null) target.localScale = endScale;
     }
 }
