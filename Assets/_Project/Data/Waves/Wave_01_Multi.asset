@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c39685249af2aa6488f759a7067b16be, type: 3}
+  m_Name: Wave_01_Multi
+  m_EditorClassIdentifier: Assembly-CSharp::MultiLaneWaveDataSO
+  waveName: Wave 1
+  timeBeforeWave: 3
+  lanes:
+  - spawnId: 1
+    enemyPrefab: {fileID: 3699543685958441121, guid: 8e012c240ffcf944c9138908da9a00b0, type: 3}
+    enemyCount: 5
+    spawnInterval: 1
+    initialDelay: 0
+  - spawnId: 2
+    enemyPrefab: {fileID: 3699543685958441121, guid: 8e012c240ffcf944c9138908da9a00b0, type: 3}
+    enemyCount: 4
+    spawnInterval: 1.5
+    initialDelay: 2
+  - spawnId: 3
+    enemyPrefab: {fileID: 3699543685958441121, guid: 8e012c240ffcf944c9138908da9a00b0, type: 3}
+    enemyCount: 8
+    spawnInterval: 0.8
+    initialDelay: 1
