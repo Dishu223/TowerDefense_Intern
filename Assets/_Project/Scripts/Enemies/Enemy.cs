@@ -20,7 +20,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private int maxHealth = 100;
 
     [Header("Juice & Feedback")]
-    [SerializeField] private MeshRenderer meshRenderer;
+    [SerializeField] private MeshRenderer meshRenderer; // on which object to apply hit-effect.
     [SerializeField] private Color flashColor = Color.white;
     [SerializeField] private Vector3 hitSquashScale = new Vector3(1.25f, 0.75f, 1.25f);
 

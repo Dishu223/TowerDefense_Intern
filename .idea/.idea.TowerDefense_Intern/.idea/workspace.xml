@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="4759922c-6c07-4022-a8b1-5a9298aae7db" name="Changes" comment="" />
+    <list default="true" id="4759922c-6c07-4022-a8b1-5a9298aae7db" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.TowerDefense_Intern/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.TowerDefense_Intern/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Level_03.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Level_03.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Data/Turrets/Turret_Gatling_Data.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Data/Turrets/Turret_Gatling_Data.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Palettes/Tile_Spawn_3.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Palettes/Tile_Spawn_3.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Scripts/Building/BuildManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Scripts/Building/BuildManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Scripts/Enemies/Enemy.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Scripts/Enemies/Enemy.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/manifest.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/packages-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/packages-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/VFXManager.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/VFXManager.asset" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -10,10 +20,15 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 7
-}]]></component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Assets/_Project/Scripts/Shop/Data/ShopItemSO.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/_Project/Scripts/Shop/Data/TurretShopItemSO.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Library/PackageCache/com.unity.render-pipelines.universal@327d93d1cbc8/Shaders/Lit.shader" root0="SKIP_HIGHLIGHTING" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 7
+}</component>
   <component name="ProjectId" id="3KETfR2NmJZBkYkAZVzUa7nawja" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -29,7 +44,8 @@
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "cidr.known.project.marker": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "feature/camera-controls",
+    "git-widget-placeholder": "Shop-System",
+    "ignore.virus.scanning.warn.message": "true",
     "settings.editor.selected.configurable": "advanced.settings"
   }
 }]]></component>

@@ -23,6 +23,7 @@ public class BuildManager : MonoBehaviour
     private Vector3Int lastPaintedCell = new Vector3Int(int.MinValue, int.MinValue, int.MinValue);
     private Plane groundPlane;
     private PlacementIndicator indicatorComponent;
+    private TurretShopItemSO currentShopItem;
 
     private void Start()
     {
@@ -31,7 +32,7 @@ public class BuildManager : MonoBehaviour
             tilemapGrid = Object.FindAnyObjectByType<TilemapGrid>();
         }
 
-        // Automatic fallback if prefab asset was dragged instead of a scene instance
+        // Automatic fallback: instantiate in the scene if assigned as a prefab asset
         if (placementIndicator != null && (!placementIndicator.scene.IsValid() || !placementIndicator.activeInHierarchy))
         {
             placementIndicator = Instantiate(placementIndicator, Vector3.zero, Quaternion.identity);
@@ -40,7 +41,10 @@ public class BuildManager : MonoBehaviour
         else if (placementIndicator == null)
         {
             PlacementIndicator found = Object.FindAnyObjectByType<PlacementIndicator>();
-            if (found != null) placementIndicator = found.gameObject;
+            if (found != null)
+            {
+                placementIndicator = found.gameObject;
+            }
         }
 
         if (placementIndicator != null)
@@ -57,6 +61,15 @@ public class BuildManager : MonoBehaviour
         groundPlane = new Plane(Vector3.up, new Vector3(0f, surfaceY, 0f));
     }
 
+    public void SetActiveTurretData(TurretShopItemSO shopItem)
+    {
+        currentShopItem = shopItem;
+        if (shopItem != null && shopItem.turretPrefab != null)
+        {
+            defaultTurretPrefab = shopItem.turretPrefab;
+        }
+    }
+
     private void Update()
     {
         HandlePlacementInput();
@@ -67,7 +80,7 @@ public class BuildManager : MonoBehaviour
         var mouse = Mouse.current;
         if (mouse == null || Camera.main == null) return;
 
-        // Prevent building through UI buttons or HUD elements
+        // Prevent building through HUD/shop UI elements
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
         {
             if (indicatorComponent != null) indicatorComponent.SetVisible(false);
@@ -87,9 +100,12 @@ public class BuildManager : MonoBehaviour
 
         bool isBuildable = tilemapGrid.IsBuildable(cellPos);
         bool isOccupied = occupiedCells.Contains(cellPos);
-        bool isValidPlacement = isBuildable && !isOccupied;
+        
+        // Stock check: if shop item is active, require > 0 stock in inventory
+        bool hasStock = currentShopItem == null || (CurrencyManager.Instance != null && CurrencyManager.Instance.GetStock(currentShopItem.itemId) > 0);
+        bool isValidPlacement = isBuildable && !isOccupied && hasStock;
 
-        // 1. Smooth Indicator Movement & Validity
+        // 1. Smooth Indicator Movement & Validity Feedback
         if (placementIndicator != null && indicatorComponent != null)
         {
             indicatorComponent.SetVisible(true);
@@ -120,6 +136,15 @@ public class BuildManager : MonoBehaviour
     private void PlaceTurret(Vector3Int cellPos, Vector3 worldPos)
     {
         if (defaultTurretPrefab == null) return;
+
+        // Consume inventory stock
+        if (currentShopItem != null && CurrencyManager.Instance != null)
+        {
+            if (!CurrencyManager.Instance.TryConsumeStock(currentShopItem.itemId))
+            {
+                return; // Stock exhausted
+            }
+        }
 
         GameObject turretObj = Instantiate(defaultTurretPrefab, worldPos, Quaternion.identity);
         occupiedCells.Add(cellPos);
