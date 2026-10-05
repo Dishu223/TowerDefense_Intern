@@ -12,7 +12,9 @@ GameObject:
   - component: {fileID: 1471251564771003352}
   - component: {fileID: 4601599619206993564}
   - component: {fileID: 7940455684502854474}
-  - component: {fileID: 3699543685958441121}
+  - component: {fileID: -2962242191820795473}
+  - component: {fileID: 486848390780454498}
+  - component: {fileID: 7097970630801864943}
   m_Layer: 0
   m_Name: Enemy_Basic
   m_TagString: Untagged
@@ -113,7 +115,7 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &3699543685958441121
+--- !u!114 &-2962242191820795473
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -122,12 +124,36 @@ MonoBehaviour:
   m_GameObject: {fileID: 2034609781527524393}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 21f2b7b41cf2e7543886bfa3e4fdd97b, type: 3}
+  m_Script: {fileID: 11500000, guid: 6cf6704731674741acd0545fe7a6db66, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  moveSpeed: 3
+  m_EditorClassIdentifier: Assembly-CSharp::Core.Combat.HealthComponent
+  baseMaxHealth: 100
+--- !u!114 &486848390780454498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2034609781527524393}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d89d1e8aa461465a8568c0a657bde7bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Core.Movement.WaypointMotor
+  baseSpeed: 3.5
+  rotationSpeed: 10
   reachThreshold: 0.1
-  maxHealth: 100
-  meshRenderer: {fileID: 0}
-  flashColor: {r: 1, g: 1, b: 1, a: 1}
-  hitSquashScale: {x: 1.25, y: 0.75, z: 1.25}
+--- !u!114 &7097970630801864943
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2034609781527524393}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 403de5568eba4c4788417c9fe0a3ed88, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Enemies.EnemyUnit
+  config: {fileID: 11400000, guid: a56e2f8157b947246ade8fd042bd2ed7, type: 2}
+  meshRenderer: {fileID: 4601599619206993564}

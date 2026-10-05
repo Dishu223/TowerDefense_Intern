@@ -1,31 +1,27 @@
-using System;
 using System.Collections.Generic;
+using Gameplay.Enemies;
 using UnityEngine;
 
-[Serializable]
-public struct LaneSpawnConfig
+[System.Serializable]
+public class LaneSpawnConfig
 {
-    [Tooltip("The Spawn Tile ID this sub-wave will emit from")]
-    public int spawnId;
+    public int spawnId = 1;
 
-    [Tooltip("Enemy prefab to spawn from this point")]
-    public Enemy enemyPrefab;
+    [Tooltip("ID matching the EnemyCatalog (e.g., 'basic', 'tank', 'runner')")]
+    public string enemyId = "basic";
 
-    public int enemyCount;
-    public float spawnInterval;
+    [Tooltip("Optional override if you want a custom one-off prefab")]
+    public EnemyUnit optionalPrefabOverride;
 
-    [Tooltip("Delay in seconds before this specific lane starts spawning")]
-    public float initialDelay;
+    public int enemyCount = 8;
+    public float spawnInterval = 0.8f;
+    public float initialDelay = 0f;
 }
 
-[CreateAssetMenu(fileName = "NewMultiLaneWave", menuName = "Tower Defense/Multi-Lane Wave Data")]
+[CreateAssetMenu(fileName = "NewMultiLaneWave", menuName = "Tower Defense/Waves/Multi-Lane Wave Data")]
 public class MultiLaneWaveDataSO : ScriptableObject
 {
-    [Header("Wave Meta")]
     public string waveName = "Wave 1";
     public float timeBeforeWave = 3f;
-
-    [Header("Lane Configurations")]
-    [Tooltip("Add as many lanes/spawns as you want to emit during this wave!")]
     public List<LaneSpawnConfig> lanes = new List<LaneSpawnConfig>();
 }

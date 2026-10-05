@@ -16,17 +16,17 @@ MonoBehaviour:
   timeBeforeWave: 3
   lanes:
   - spawnId: 1
-    enemyPrefab: {fileID: 3699543685958441121, guid: 8e012c240ffcf944c9138908da9a00b0, type: 3}
+    enemyPrefab: {fileID: 2034609781527524393, guid: 8e012c240ffcf944c9138908da9a00b0, type: 3}
     enemyCount: 5
     spawnInterval: 1
     initialDelay: 0
   - spawnId: 2
-    enemyPrefab: {fileID: 3699543685958441121, guid: 8e012c240ffcf944c9138908da9a00b0, type: 3}
+    enemyPrefab: {fileID: 2034609781527524393, guid: 8e012c240ffcf944c9138908da9a00b0, type: 3}
     enemyCount: 4
     spawnInterval: 1.5
     initialDelay: 2
   - spawnId: 3
-    enemyPrefab: {fileID: 3699543685958441121, guid: 8e012c240ffcf944c9138908da9a00b0, type: 3}
+    enemyPrefab: {fileID: 2034609781527524393, guid: 8e012c240ffcf944c9138908da9a00b0, type: 3}
     enemyCount: 8
     spawnInterval: 0.8
     initialDelay: 1

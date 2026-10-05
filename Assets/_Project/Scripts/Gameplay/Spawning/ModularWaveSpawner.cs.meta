@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8258f773ffbc45198f485aba9b1711e3
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - enemyCatalog: {fileID: 11400000, guid: 8caee8c110f55e149be3792bcfb38ee2, type: 2}
+  - pathfinder: {instanceID: 0}
+  - tilemapGrid: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

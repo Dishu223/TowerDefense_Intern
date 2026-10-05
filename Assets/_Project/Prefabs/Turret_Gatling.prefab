@@ -614,7 +614,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5375328274852136930}
-  - component: {fileID: 8494367629706263954}
+  - component: {fileID: -518150493448783674}
   m_Layer: 0
   m_Name: Turret_Gatling
   m_TagString: Untagged
@@ -638,7 +638,7 @@ Transform:
   - {fileID: 6760681046866566168}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
---- !u!114 &8494367629706263954
+--- !u!114 &-518150493448783674
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -647,14 +647,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 4713856283400886309}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aaf9c7e5d34a19843aaa2825f4f5eb9e, type: 3}
+  m_Script: {fileID: 11500000, guid: 9fcdc998aff840f9926aba111bd44bfe, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Turret
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Towers.TurretUnit
   turretData: {fileID: 11400000, guid: fd88432250f288a4c8d8a9739c4093bc, type: 2}
+  projectilePrefab: {fileID: -5154390902787949795, guid: bd8bac4e9c16f7f4aaeb5cd082ee2056, type: 3}
   swivel: {fileID: 8687980568954859652}
   firePoint: {fileID: 8710457664102106192}
   muzzleFlash: {fileID: 4092416107072768412}
   turnSpeed: 12
+  scanInterval: 0.12
 --- !u!1 &5824777517217729701
 GameObject:
   m_ObjectHideFlags: 0
