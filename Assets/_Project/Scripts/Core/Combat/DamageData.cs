@@ -5,13 +5,10 @@ namespace Core.Combat
     public enum DamageType
     {
         Physical,
-        Energy,
-        Explosive
+        Elemental
     }
 
-    /// <summary>
     /// Immutable value object containing information about a combat damage event.
-    /// </summary>
     public readonly struct DamageData
     {
         public int Amount { get; }

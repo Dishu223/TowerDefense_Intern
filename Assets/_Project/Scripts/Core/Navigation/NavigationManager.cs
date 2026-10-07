@@ -22,13 +22,11 @@ namespace Core.Navigation
         {
             if (tilemapGrid == null || pathfinder == null) return new List<Vector3>();
 
-            // Matches TryGetSpawnData(int, out Vector3Int, out int)
             if (!tilemapGrid.TryGetSpawnData(spawnId, out Vector3Int startCell, out int destExitId))
             {
                 return new List<Vector3>();
             }
 
-            // Matches TryGetExitPosition(int, out Vector3Int)
             if (!tilemapGrid.TryGetExitPosition(destExitId, out Vector3Int endCell))
             {
                 return new List<Vector3>();

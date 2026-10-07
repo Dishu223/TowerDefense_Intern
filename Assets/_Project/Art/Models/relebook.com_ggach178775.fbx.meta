@@ -3,7 +3,117 @@ guid: 7716b90966ecf6f4d9b282e39c4eb6ba
 ModelImporter:
   serializedVersion: 24600
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 087aab1c-4e3b-47c4-a5b8-4df6114e02ce
+    second: {fileID: 2100000, guid: 86b439d50be982d4fb996c057826cedb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 598173c0-2e22-4372-a72d-7d31b2a954d4
+    second: {fileID: 2100000, guid: b46dcb91cf035e6459649473340f7f4f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 5ca307a8-4dac-4b93-b8c4-150a33329c24
+    second: {fileID: 2100000, guid: 3d28d004aedc4a849aeb162c948812ac, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 8cfc8cee-aca6-47cd-b75a-86c9db398e55
+    second: {fileID: 2100000, guid: d9f2b585392357d409516e9ce95f9315, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: b0a6f7e8-0e77-4caa-9726-b725f5a879c7
+    second: {fileID: 2100000, guid: 56dc628e3e65f7341a1ac17b76452fc2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: c9e1fc3c-8e53-4428-89c9-7f3b6717ebc7
+    second: {fileID: 2100000, guid: cd9623f0c67012247907e4de8195c9ea, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: efd6f468-bacf-4164-bd61-6bb5b2851678
+    second: {fileID: 2100000, guid: cbc3b2d776a9063469a74dbea8f56b5a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: ff442d53-de9b-42c4-ba40-00e3351b67a1
+    second: {fileID: 2100000, guid: 2e5e5ac4cbadc3143acea6cfc0dbc511, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: relebook-export-ggach178775-001
+    second: {fileID: 2800000, guid: 672945590e6ee964fa89fcc7056d358e, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: relebook-export-ggach178775-002
+    second: {fileID: 2800000, guid: 52678812adfd1b94a9eec8e423aa2346, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: relebook-export-ggach178775-003
+    second: {fileID: 2800000, guid: a7e481f47b9725b42adebf567c9cf95a, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: relebook-export-ggach178775-004
+    second: {fileID: 2800000, guid: e9dac66ad45169f47a864717fff8cd1a, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: relebook-export-ggach178775-005
+    second: {fileID: 2800000, guid: 0540847c330181d409036cda2e73e65d, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: relebook-export-ggach178775-006
+    second: {fileID: 2800000, guid: ba810f78929d2784498c6c9e37e2750b, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: relebook-export-ggach178775-007
+    second: {fileID: 2800000, guid: 8b88a73571e8bb943a4c2ea0f6ceb17e, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: relebook-export-ggach178775-008
+    second: {fileID: 2800000, guid: d0a9e544470c7ce48aa80afb4a9cc888, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: relebook-export-ggach178775-009
+    second: {fileID: 2800000, guid: a6b70285ddf40e64fa80a83334b034c2, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: relebook-export-ggach178775-010
+    second: {fileID: 2800000, guid: d69d9eb6be0757143ae18755563a12a2, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: relebook-export-ggach178775-011
+    second: {fileID: 2800000, guid: daf1d7182e9631342857905e50639c9c, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: relebook-export-ggach178775-012
+    second: {fileID: 2800000, guid: c26cdeb0178d0584e9155df581b7bc87, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: relebook-export-ggach178775-013
+    second: {fileID: 2800000, guid: f543251e983388e45b7eb8b7405d62ef, type: 3}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: relebook-export-ggach178775-014
+    second: {fileID: 2800000, guid: fd0e4a2eedf53a24da81c5f0cbdaa92b, type: 3}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -35,7 +145,7 @@ ModelImporter:
   meshes:
     lODScreenPercentages: []
     globalScale: 1
-    meshCompression: 2
+    meshCompression: 3
     addColliders: 0
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
@@ -97,7 +207,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 0.01
+    globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 1

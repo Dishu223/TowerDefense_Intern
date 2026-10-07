@@ -4,9 +4,7 @@ using UnityEngine;
 
 namespace Core.Movement
 {
-    /// <summary>
     /// Contract for any entity capable of autonomous or scripted locomotion.
-    /// </summary>
     public interface IMover
     {
         float Speed { get; set; }

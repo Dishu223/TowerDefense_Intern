@@ -4,10 +4,8 @@ using UnityEngine;
 
 namespace Core.Movement
 {
-    /// <summary>
     /// Standalone motor that translates a Transform along a sequence of 3D waypoints.
     /// Completely decoupled from combat, health, or pooling logic.
-    /// </summary>
     public class WaypointMotor : MonoBehaviour, IMover
     {
         [Header("Locomotion Tuning")]

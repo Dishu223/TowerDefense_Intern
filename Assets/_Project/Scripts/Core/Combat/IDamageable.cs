@@ -2,9 +2,7 @@
 
 namespace Core.Combat
 {
-    /// <summary>
     /// Contract for entities that can receive damage and track mortality.
-    /// </summary>
     public interface IDamageable
     {
         int CurrentHealth { get; }

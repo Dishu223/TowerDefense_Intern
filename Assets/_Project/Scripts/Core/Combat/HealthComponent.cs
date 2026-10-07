@@ -3,10 +3,8 @@ using UnityEngine;
 
 namespace Core.Combat
 {
-    /// <summary>
     /// Standalone health receiver component implementing IDamageable.
     /// Manages vitality, damage calculations, and mortality dispatching.
-    /// </summary>
     public class HealthComponent : MonoBehaviour, IDamageable
     {
         [Header("Vitality Configuration")]

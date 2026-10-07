@@ -3,13 +3,10 @@ using UnityEngine;
 
 namespace Core.Combat
 {
-    /// <summary>
-    /// High-performance spatial registry for targetable entities.
-    /// Provides zero-allocation proximity queries.
-    /// </summary>
     public static class SpatialTargetRegistry
     {
         private static readonly HashSet<ITargetable> activeTargets = new HashSet<ITargetable>();
+        private static readonly List<ITargetable> deadReferencesBuffer = new List<ITargetable>();
 
         public static void Register(ITargetable target)
         {
@@ -27,18 +24,22 @@ namespace Core.Combat
             }
         }
 
-        /// <summary>
-        /// Finds the closest valid target to an origin position within maxRange matching the specified faction.
-        /// Zero allocations (avoids foreach enumerator heap boxing via HashSet struct enumerator).
-        /// </summary>
         public static ITargetable GetClosest(Vector3 origin, float maxRange, TargetFaction targetFaction = TargetFaction.Enemy)
         {
             float shortestSqrDistance = maxRange * maxRange;
             ITargetable closest = null;
+            deadReferencesBuffer.Clear();
 
             foreach (ITargetable target in activeTargets)
             {
-                if (target == null || !target.IsTargetable || target.Faction != targetFaction)
+                // Unity-safe check: check if the underlying Unity Object was destroyed
+                if (target is Object unityObj && unityObj == null)
+                {
+                    deadReferencesBuffer.Add(target);
+                    continue;
+                }
+
+                if (!target.IsTargetable || target.Faction != targetFaction)
                 {
                     continue;
                 }
@@ -51,15 +52,19 @@ namespace Core.Combat
                 }
             }
 
+            // Clean up any destroyed objects automatically
+            for (int i = 0; i < deadReferencesBuffer.Count; i++)
+            {
+                activeTargets.Remove(deadReferencesBuffer[i]);
+            }
+
             return closest;
         }
 
-        /// <summary>
-        /// Clears all entries. Useful on scene transitions.
-        /// </summary>
         public static void Clear()
         {
             activeTargets.Clear();
+            deadReferencesBuffer.Clear();
         }
     }
 }

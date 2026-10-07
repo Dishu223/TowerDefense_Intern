@@ -16,6 +16,6 @@ MonoBehaviour:
   prefab: {fileID: 4713856283400886309, guid: 956086d5a918b9c4eb32791e6c1243de, type: 3}
   range: 5
   fireRate: 5
-  damage: 5
+  damage: 25
   projectilePrefab: {fileID: 8154311608144813816, guid: bd8bac4e9c16f7f4aaeb5cd082ee2056, type: 3}
   buildCost: 100

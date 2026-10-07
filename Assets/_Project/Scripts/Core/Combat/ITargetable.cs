@@ -9,9 +9,7 @@ namespace Core.Combat
         Neutral
     }
 
-    /// <summary>
     /// Contract for any entity that can be spatially tracked and locked onto by turrets or weapons.
-    /// </summary>
     public interface ITargetable
     {
         Transform TargetTransform { get; }

@@ -4,10 +4,8 @@ using UnityEngine.Pool;
 
 namespace Core.Pooling
 {
-    /// <summary>
     /// High-performance pool implementation wrapping Unity's low-overhead ObjectPool.
     /// Automatically invokes IPoolable lifecycle methods on Component instances.
-    /// </summary>
     public class GenericPool<T> : IPool<T> where T : Component
     {
         private readonly ObjectPool<T> internalPool;
