@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using Gameplay.Base;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -23,6 +24,10 @@ public class RoutingTile : TileBase
 
     [Tooltip("If this is a Spawn tile, which Exit ID should enemies navigate to?")]
     public int destinationExitId = 1;
+
+    [Header("Exit Gameplay Data")]
+    [Tooltip("Health points for this exit. Only used if role == TileRole.Exit")]
+    [Min(1)] public int exitHealth = 20;
 
     [Header("Visuals & Colors")]
     public Color tileColor = Color.white;
@@ -49,19 +54,34 @@ public class RoutingTile : TileBase
 
     public override bool StartUp(Vector3Int position, ITilemap tilemap, GameObject go)
     {
-        if (go != null && role != TileRole.Road)
+        if (go != null)
         {
-            var renderer = go.GetComponentInChildren<MeshRenderer>();
-            if (renderer != null)
+            // 1. Color Tinting Juice
+            if (role != TileRole.Road)
             {
-                if (propertyBlock == null)
+                var renderer = go.GetComponentInChildren<MeshRenderer>();
+                if (renderer != null)
                 {
-                    propertyBlock = new MaterialPropertyBlock();
-                }
+                    if (propertyBlock == null)
+                    {
+                        propertyBlock = new MaterialPropertyBlock();
+                    }
 
-                renderer.GetPropertyBlock(propertyBlock);
-                propertyBlock.SetColor(BaseColorPropertyId, tileColor);
-                renderer.SetPropertyBlock(propertyBlock);
+                    renderer.GetPropertyBlock(propertyBlock);
+                    propertyBlock.SetColor(BaseColorPropertyId, tileColor);
+                    renderer.SetPropertyBlock(propertyBlock);
+                }
+            }
+
+            // 2. Configure Exit Health Dynamically from this ScriptableObject
+            if (role == TileRole.Exit)
+            {
+                var baseCore = go.GetComponent<BaseCore>();
+                if (baseCore == null)
+                {
+                    baseCore = go.AddComponent<BaseCore>();
+                }
+                baseCore.Initialize(pointId, exitHealth);
             }
         }
 
@@ -80,7 +100,6 @@ public class RoutingTile : TileBase
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        // Automatically updates whenever a field is tweaked in the inspector
         RegeneratePreviewSprite();
     }
 #endif
@@ -93,7 +112,6 @@ public class RoutingTile : TileBase
 
         Color[] pixels = new Color[size * size];
 
-        // 1. Draw base background with border
         for (int y = 0; y < size; y++)
         {
             for (int x = 0; x < size; x++)
@@ -103,7 +121,6 @@ public class RoutingTile : TileBase
             }
         }
 
-        // 2. Format badge label
         string badgeText = role switch
         {
             TileRole.Spawn => $"S{pointId}",
@@ -111,7 +128,6 @@ public class RoutingTile : TileBase
             _ => "RD"
         };
 
-        // 3. Dynamic Auto-Centering
         int charWidth = 4;
         int spacing = 1;
         int totalWidth = (badgeText.Length * charWidth) + ((badgeText.Length - 1) * spacing);

@@ -5,6 +5,7 @@ using Core.Combat;
 using Core.Economy;
 using Core.Movement;
 using Core.Pooling;
+using Gameplay.Base;
 using UnityEngine;
 
 namespace Gameplay.Enemies
@@ -19,7 +20,7 @@ namespace Gameplay.Enemies
         [Header("Visual Juice References")]
         [SerializeField] private MeshRenderer meshRenderer;
 
-        // Public contracts
+        // Public contracts 
         public Transform TargetTransform => transform;
         public Vector3 AimPosition => transform.position + Vector3.up * aimHeightOffset;
         public bool IsTargetable => gameObject.activeInHierarchy && healthComponent != null && !healthComponent.IsDead;
@@ -156,6 +157,14 @@ namespace Gameplay.Enemies
 
         private void HandleDestinationReached()
         {
+            // Find the specific base at this exit location
+            BaseCore targetBase = BaseCore.FindClosestBase(transform.position);
+            if (targetBase != null && !targetBase.IsDead)
+            {
+                DamageData breachDamage = new DamageData(1, DamageType.Physical, gameObject);
+                targetBase.ApplyDamage(breachDamage);
+            }
+
             OnUnitEscaped?.Invoke(this);
             RecycleSelf();
         }

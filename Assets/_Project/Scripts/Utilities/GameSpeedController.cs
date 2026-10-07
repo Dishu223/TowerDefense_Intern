@@ -11,6 +11,11 @@ public class GameSpeedController : MonoBehaviour
 
     private void Update()
     {
+        if (Core.GameFlow.GameFlowManager.Instance != null && 
+            Core.GameFlow.GameFlowManager.Instance.CurrentState != Core.GameFlow.GameState.Playing)
+        {
+            return; // Don't allow speeding up or unpausing while game over or paused!
+        }
         // Check if a physical keyboard is connected and the Space key was pressed this frame
         if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
         {

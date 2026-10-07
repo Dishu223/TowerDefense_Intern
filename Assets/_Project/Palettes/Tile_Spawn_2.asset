@@ -15,6 +15,7 @@ MonoBehaviour:
   role: 1
   pointId: 2
   destinationExitId: 1
+  exitHealth: 20
   tileColor: {r: 0.28235295, g: 0.7921569, b: 0.89411765, a: 1}
   prefab: {fileID: 4681427827185028115, guid: 426ec03bbeb4a3c49bd30ff0d2a63b9e, type: 3}
   previewSprite: {fileID: 0}

@@ -11,6 +11,8 @@ GameObject:
   - component: {fileID: 4197004680565012975}
   - component: {fileID: 4746803859406720939}
   - component: {fileID: 3322188175715821926}
+  - component: {fileID: -751337444430008677}
+  - component: {fileID: 6779045908819189483}
   m_Layer: 0
   m_Name: END
   m_TagString: Untagged
@@ -90,3 +92,29 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &-751337444430008677
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7801251809705683162}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6cf6704731674741acd0545fe7a6db66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Core.Combat.HealthComponent
+  baseMaxHealth: 100
+--- !u!114 &6779045908819189483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7801251809705683162}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8bba9441173744c6a854739c6f5a6d8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Gameplay.Base.BaseCore
+  maxBaseHealth: 20
