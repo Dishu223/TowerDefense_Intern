@@ -1,37 +1,52 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using Core.Economy;
+using Data.Shop;
 
 public class BuildManager : MonoBehaviour
 {
     [Header("Dependencies")]
     [SerializeField] private TilemapGrid tilemapGrid;
-    [SerializeField] private GameObject defaultTurretPrefab;
     [SerializeField] private GameObject placementIndicator;
+    [SerializeField] private ShopCatalogSO shopCatalog;
 
     [Header("Painting Controls")]
     [Tooltip("Hold down left mouse button to paint turrets across tiles")]
-    [SerializeField] private bool allowDragPainting = true;
+    [SerializeField] private bool allowDragPainting = false; // Turned off by default for economy safety
 
     [Header("Placement Juice")]
-    [Tooltip("Small scale bounce when turrets are placed")]
     [SerializeField] private bool animateTurretSpawn = true;
 
-    private readonly HashSet<Vector3Int> occupiedCells = new HashSet<Vector3Int>();
+    // Track both coordinate occupancy and the active instance + its data for refunds
+    private struct PlacedTurretRecord
+    {
+        public GameObject Instance;
+        public TurretDataSO Data;
+    }
+
+    private readonly Dictionary<Vector3Int, PlacedTurretRecord> placedTurrets = new Dictionary<Vector3Int, PlacedTurretRecord>();
     private Vector3Int lastPaintedCell = new Vector3Int(int.MinValue, int.MinValue, int.MinValue);
     private Plane groundPlane;
     private PlacementIndicator indicatorComponent;
+
+    // Current State
+    private TurretDataSO selectedTurretData;
+    private bool isSellModeActive;
+
+    public event Action<TurretDataSO> OnTurretSelected;
+    public event Action<bool> OnSellModeChanged;
 
     private void Start()
     {
         if (tilemapGrid == null)
         {
-            tilemapGrid = Object.FindAnyObjectByType<TilemapGrid>();
+            tilemapGrid = UnityEngine.Object.FindAnyObjectByType<TilemapGrid>();
         }
 
-        // Automatic fallback if prefab asset was dragged instead of a scene instance
         if (placementIndicator != null && (!placementIndicator.scene.IsValid() || !placementIndicator.activeInHierarchy))
         {
             placementIndicator = Instantiate(placementIndicator, Vector3.zero, Quaternion.identity);
@@ -39,7 +54,7 @@ public class BuildManager : MonoBehaviour
         }
         else if (placementIndicator == null)
         {
-            PlacementIndicator found = Object.FindAnyObjectByType<PlacementIndicator>();
+            PlacementIndicator found = UnityEngine.Object.FindAnyObjectByType<PlacementIndicator>();
             if (found != null) placementIndicator = found.gameObject;
         }
 
@@ -55,6 +70,12 @@ public class BuildManager : MonoBehaviour
 
         float surfaceY = tilemapGrid != null ? tilemapGrid.FloorSurfaceY : 0.2f;
         groundPlane = new Plane(Vector3.up, new Vector3(0f, surfaceY, 0f));
+
+        // Auto-select first turret in catalog as default
+        if (shopCatalog != null && shopCatalog.AvailableTurrets.Count > 0)
+        {
+            SelectTurret(shopCatalog.AvailableTurrets[0]);
+        }
     }
 
     private void Update()
@@ -62,12 +83,31 @@ public class BuildManager : MonoBehaviour
         HandlePlacementInput();
     }
 
+    public void SelectTurret(TurretDataSO data)
+    {
+        isSellModeActive = false;
+        selectedTurretData = data;
+        OnSellModeChanged?.Invoke(false);
+        OnTurretSelected?.Invoke(data);
+    }
+
+    public void ToggleSellMode()
+    {
+        isSellModeActive = !isSellModeActive;
+        if (isSellModeActive)
+        {
+            selectedTurretData = null;
+            OnTurretSelected?.Invoke(null);
+        }
+        OnSellModeChanged?.Invoke(isSellModeActive);
+    }
+
     private void HandlePlacementInput()
     {
         var mouse = Mouse.current;
         if (mouse == null || Camera.main == null) return;
 
-        // Prevent building through UI buttons or HUD elements
+        // Block input if hovering UI
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
         {
             if (indicatorComponent != null) indicatorComponent.SetVisible(false);
@@ -86,25 +126,41 @@ public class BuildManager : MonoBehaviour
         Vector3 cellCenter = tilemapGrid.GetWorldCenter(cellPos);
 
         bool isBuildable = tilemapGrid.IsBuildable(cellPos);
-        bool isOccupied = occupiedCells.Contains(cellPos);
-        bool isValidPlacement = isBuildable && !isOccupied;
+        bool isOccupied = placedTurrets.ContainsKey(cellPos);
 
-        // 1. Smooth Indicator Movement & Validity
+        // Indicator Validity Status
+        bool isValidAction = false;
+        if (isSellModeActive)
+        {
+            isValidAction = isOccupied; // Valid to sell if tile has a turret
+        }
+        else if (selectedTurretData != null)
+        {
+            bool canAfford = EconomyManager.Instance == null || EconomyManager.Instance.CanAfford(selectedTurretData.cost);
+            isValidAction = isBuildable && !isOccupied && canAfford;
+        }
+
         if (placementIndicator != null && indicatorComponent != null)
         {
             indicatorComponent.SetVisible(true);
             indicatorComponent.SetTargetPosition(cellCenter);
-            indicatorComponent.SetStatus(isValidPlacement);
+            indicatorComponent.SetStatus(isValidAction);
         }
 
-        // 2. Drag-to-Paint & Single Click
-        bool isBuilding = allowDragPainting ? mouse.leftButton.isPressed : mouse.leftButton.wasPressedThisFrame;
+        // Action Trigger
+        bool isTriggered = allowDragPainting && !isSellModeActive 
+            ? mouse.leftButton.isPressed 
+            : mouse.leftButton.wasPressedThisFrame;
 
-        if (isBuilding)
+        if (isTriggered)
         {
             if (cellPos != lastPaintedCell)
             {
-                if (isValidPlacement)
+                if (isSellModeActive)
+                {
+                    if (isOccupied) SellTurret(cellPos);
+                }
+                else if (isValidAction)
                 {
                     PlaceTurret(cellPos, cellCenter);
                 }
@@ -119,10 +175,21 @@ public class BuildManager : MonoBehaviour
 
     private void PlaceTurret(Vector3Int cellPos, Vector3 worldPos)
     {
-        if (defaultTurretPrefab == null) return;
+        if (selectedTurretData == null || selectedTurretData.turretPrefab == null) return;
 
-        GameObject turretObj = Instantiate(defaultTurretPrefab, worldPos, Quaternion.identity);
-        occupiedCells.Add(cellPos);
+        // 1. Transaction verification
+        if (EconomyManager.Instance != null)
+        {
+            if (!EconomyManager.Instance.TrySpend(selectedTurretData.cost)) return;
+        }
+
+        // 2. Instantiate and register
+        GameObject turretObj = Instantiate(selectedTurretData.turretPrefab, worldPos, Quaternion.identity);
+        placedTurrets.Add(cellPos, new PlacedTurretRecord
+        {
+            Instance = turretObj,
+            Data = selectedTurretData
+        });
 
         if (animateTurretSpawn)
         {
@@ -132,6 +199,31 @@ public class BuildManager : MonoBehaviour
         if (indicatorComponent != null)
         {
             indicatorComponent.TriggerPlacementJuice(worldPos);
+            indicatorComponent.SetStatus(false);
+        }
+    }
+
+    private void SellTurret(Vector3Int cellPos)
+    {
+        if (!placedTurrets.TryGetValue(cellPos, out PlacedTurretRecord record)) return;
+
+        // 1. Refund Coins
+        if (EconomyManager.Instance != null && record.Data != null)
+        {
+            int refund = record.Data.CalculateRefundAmount();
+            EconomyManager.Instance.Add(refund);
+        }
+
+        // 2. Cleanup Object
+        if (record.Instance != null)
+        {
+            Destroy(record.Instance);
+        }
+
+        placedTurrets.Remove(cellPos);
+
+        if (indicatorComponent != null)
+        {
             indicatorComponent.SetStatus(false);
         }
     }
@@ -148,7 +240,6 @@ public class BuildManager : MonoBehaviour
         {
             elapsed += Time.deltaTime;
             float t = elapsed / duration;
-            // Elastic pop curve
             float curve = Mathf.Sin(t * Mathf.PI * 0.5f);
             target.localScale = Vector3.Lerp(target.localScale, endScale, curve);
             yield return null;

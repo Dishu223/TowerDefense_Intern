@@ -1,3 +1,16 @@
-﻿fileFormatVersion: 2
+fileFormatVersion: 2
 guid: 9fcdc998aff840f9926aba111bd44bfe
-timeCreated: 1791231366
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - turretData: {fileID: 11400000, guid: fd88432250f288a4c8d8a9739c4093bc, type: 2}
+  - projectilePrefab: {fileID: -5154390902787949795, guid: bd8bac4e9c16f7f4aaeb5cd082ee2056, type: 3}
+  - swivel: {instanceID: 0}
+  - firePoint: {instanceID: 0}
+  - muzzleFlash: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

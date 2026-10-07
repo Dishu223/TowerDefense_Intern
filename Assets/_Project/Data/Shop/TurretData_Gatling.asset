@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c677c009a0dc40d4cab72b9c02984103, type: 3}
-  m_Name: Turret_Gatling_Data
+  m_Name: TurretData_Gatling
   m_EditorClassIdentifier: Assembly-CSharp::TurretDataSO
   turretId: gatling
-  turretName: Gatling Cannon
-  icon: {fileID: 0}
+  turretName: Gatling Turret
+  icon: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
   prefab: {fileID: 4713856283400886309, guid: 956086d5a918b9c4eb32791e6c1243de, type: 3}
   range: 5
   fireRate: 5
   damage: 25
   projectilePrefab: {fileID: 7360819566501365384, guid: bd8bac4e9c16f7f4aaeb5cd082ee2056, type: 3}
-  buildCost: 100
+  buildCost: 25
   sellRefundRatio: 0.7

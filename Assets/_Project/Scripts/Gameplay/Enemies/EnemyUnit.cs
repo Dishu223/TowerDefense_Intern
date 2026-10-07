@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Core.Combat;
+using Core.Economy;
 using Core.Movement;
 using Core.Pooling;
 using UnityEngine;
@@ -144,6 +145,11 @@ namespace Gameplay.Enemies
 
         private void HandleKilled(DamageData data)
         {
+            if (config != null && EconomyManager.Instance != null)
+            {
+                EconomyManager.Instance.Add(config.bountyReward);
+            }
+                
             OnUnitDefeated?.Invoke(this);
             RecycleSelf();
         }
